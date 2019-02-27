@@ -8,6 +8,8 @@ var axios = require('axios');
 
 var moment = require('moment');
 
+var fs = require('fs');
+
 var cmd = process.argv[2];
 var arg = process.argv[3];
 
@@ -76,12 +78,31 @@ function movie_this(movie) {
         console.log("Plot summary:");
         console.log(response.data.Plot);
         console.log("Actors: " + response.data.Actors);
+        noMovie = false;
     });
 }
 
+// Executes another function of the bot based on information read from random.txt.
 function do_what_it_says() {
-    console.log("do-what-it-says fired");
-
+    var content;
+    fs.readFile("./random.txt", "utf-8", function(error, data) {
+        if(error) {
+            throw error;
+        }
+        content = data;
+        var split = content.split(",");
+        if(split[0] !== "do-what-it-says") {
+            split[0] = split[0].replace(/-/g, '_');
+        } else {
+            return;
+        }
+        try {
+            console.log(split[0] + "(" + split[1] + ")");
+            eval(split[0] + "('" + split[1] + "')");
+        } catch(err) {
+            console.log("Sorry, I didn't understand your request. If you want a list of functions to use, try passing in 'commands' as your third argument.");
+        }
+    });
 }
 
 // Prints a list of available commands that LIRI can handle. TBD.

@@ -2,7 +2,7 @@ require("dotenv").config();
 var keys = require("./keys.js");
 
 var Spotify = require('node-spotify-api');
-spotify = new Spotify(keys.spotify);
+var spotify = new Spotify(keys.spotify);
 
 var axios = require('axios');
 
@@ -17,7 +17,6 @@ var arg = process.argv[3];
 console.log();
 if(cmd !== "do-what-it-says" && cmd !== "commands") {
     var fixedCmd = cmd.replace(/-/g, '_');
-    console.log(fixedCmd + "('" + arg + "')");
     try {
         eval(fixedCmd + "('" + arg + "')");
     } catch(err) {
@@ -46,10 +45,33 @@ function concert_this(artist) {
     });
 }
 
-// Searches the Spotify API using a song name passed in as a parameter.
+// Searches the Spotify API using a song name passed in as a parameter. Searches "Run to the Hills" if no param is provided.
 function spotify_this_song(song) {
-    console.log("spotify-this-song fired");
-
+    var noSong = false;
+    if(song === "undefined") {
+        song = "Fear of the Dark"
+        noSong = true;
+    }
+    spotify.search({
+        type: "track",
+        query: song,
+        limit: 1
+    }, function(err, data) {
+        if(err) {
+            console.log("An error occurred: " + err);
+            return;
+        } 
+        //console.log(data.tracks.items[0]);
+        if(noSong) {
+            console.log("I like Iron Maiden, so since you didn't specify a song, we'll look at one of theirs.");
+            console.log();
+        }
+        console.log("Here's some data about the song " + song + ":");
+        console.log("The artist is: " + data.tracks.items[0].album.artists[0].name);
+        console.log("The album the song is on is: " + data.tracks.items[0].album.name);
+        console.log("Here's a preview link to the song: " + data.tracks.items[0].preview_url);
+        noSong = false;
+    });
 }
 
 // Searches the OMDB API using a movie title passed in as a parameter. Searches for "Mr. Nobody" if no param is provided.
@@ -93,11 +115,11 @@ function do_what_it_says() {
         var split = content.split(",");
         if(split[0] !== "do-what-it-says") {
             split[0] = split[0].replace(/-/g, '_');
+            split[1] = split[1].replace(/"/g, '')
         } else {
             return;
         }
         try {
-            console.log(split[0] + "(" + split[1] + ")");
             eval(split[0] + "('" + split[1] + "')");
         } catch(err) {
             console.log("Sorry, I didn't understand your request. If you want a list of functions to use, try passing in 'commands' as your third argument.");

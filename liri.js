@@ -25,7 +25,7 @@ if(cmd !== "do-what-it-says" && cmd !== "commands") {
 } else if(cmd === "do-what-it-says") {
     do_what_it_says();
 } else {
-    help();
+    commands();
 }
 
 // Searches the Bands In Town Artist Events API using a band name passed in as a parameter. Searches for "System of a Down" if no band param was provided.
@@ -127,7 +127,22 @@ function do_what_it_says() {
     });
 }
 
-// Prints a list of available commands that LIRI can handle. TBD.
-function help() {
-    console.log("help fired");
+// Prints a list of available commands that LIRI can handle.
+function commands() {
+    console.log("Here's a list of available commands, their syntax, and their functions:");
+    console.log();
+    console.log("node liri.js concert-this 'arg'");
+    console.log("Prints information about the next concert that will feature the band passed in as an argument. If no argument is provided, searches a band the developer likes.");
+    console.log();
+    console.log("node liri.js spotify-this-song 'arg'");
+    console.log("Prints information about the song passed in as an argument. If no argument is provided, searches a song the developer likes.");
+    console.log();
+    console.log("node liri.js movie-this 'arg'");
+    console.log("Prints information about the movie passed in as an argument. If no argument is provided, searches a movie the developer likes.");
+    console.log();
+    console.log("node liri.js do-what-it-says");
+    console.log("Reads 'random.txt' and evaluates whatever command is written there, if possible.");    
+    console.log();
+    console.log("node liri.js commands");
+    console.log("Prints a list of LIRI's commands, their syntax, and their functions.");
 }
